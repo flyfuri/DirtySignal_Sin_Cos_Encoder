@@ -1,0 +1,31 @@
+{
+    "name": "DirtySignal_Sin_Cos_Encoder",
+    "version": "1.0.0",
+    "description": "Reading two sinoidal signals with phase shift around 90° as a sine-cosine-encoder",
+    "keywords": "Encoder, Measurement",
+    "repository":
+    {
+      "type": "git",
+      "url": "https://github.com/flyfuri/DirtySignal_Sin_Cos_Encoder.git"
+    },
+    "authors":
+    [
+      {
+        "name": "Bernhard Fuhrer",
+        "email": ".",
+        "url": "https://github.com/flyfuri",
+        "maintainer": true 
+      }
+    ],
+    "license": "MIT",
+    "homepage": "https://github.com/flyfuri",
+    "frameworks": "arduino",
+    "platforms": "*",
+    "dependencies":
+    [
+      {
+          "name": "TimerAndFilters",
+          "version": "https://github.com/flyfuri/TimerAndFilter.git"
+      }
+    ]
+  }
