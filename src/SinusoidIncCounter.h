@@ -35,11 +35,6 @@ class CSinIncCntr{
         int m__intpolMax;  //actual Max used for interpolation
         int m__intpolMin;    //actual Min used for interpolation
 
-        //used to scale the input channels (equalize the amplitudes)
-        float m__Ch1Factor = 1; //factor to scale the channel
-        float m__Ch2Factor = 1; //factor to scale the channel
-        float m__Ch1MinLevel = 0;  //level of minimum(above 0) 
-        float m__Ch2MinLevel = 0;  //level of minimum(above 0) 
 
         double m_Ch1_scaled, m_Ch2_scaled; //scaled channels
 
@@ -53,8 +48,7 @@ class CSinIncCntr{
         int m__SinInterpolMinMax(int min, int max, int actval, int resolution);
         
     public:
-        CSinIncCntr(); 
-        void setScalings(float Ch1_fact, float Ch2_fact, float Ch1_minLev, float Ch2_minLev);
+        CSinIncCntr();
         int calc(int actCh1, int actCh2);
         int read();
         int setTo(int value);

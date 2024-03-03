@@ -95,15 +95,12 @@ int CSinIncCntr::m__SinInterpolMinMax(int min, int max, int actval, int resoluti
 }
 
 int CSinIncCntr::calc(int actCh1, int actCh2){
-    //amplifying channels
-    m_Ch1_scaled = (int)(((float)actCh1 - m__Ch1MinLevel) * m__Ch1Factor + m__Ch1MinLevel);
-    m_Ch2_scaled = (int)(((float)actCh2 - m__Ch2MinLevel) * m__Ch2Factor + m__Ch2MinLevel);
 
     //calculate sum of both channels the help determine counting direction
-    m__sum = m_Ch1_scaled + m_Ch2_scaled;   
+    m__sum = actCh1 + actCh2;   
 
     //calculate difference (subtraction) of the channels to see where they cross (nullpoint of difference)
-    m__sub = m_Ch1_scaled - m_Ch2_scaled;
+    m__sub = actCh1 - actCh2;
 
 
     //init difference curve half status at beginning
@@ -192,13 +189,6 @@ int CSinIncCntr::calc(int actCh1, int actCh2){
 
     return m__actPos;
 } 
-
-void CSinIncCntr::setScalings(float Ch1_fact, float Ch2_fact, float Ch1_minLev, float Ch2_minLev){
-    m__Ch1Factor = Ch1_fact;
-    m__Ch2Factor = Ch2_fact;
-    m__Ch1MinLevel = Ch1_minLev;
-    m__Ch2MinLevel = Ch2_minLev;
-}
 
 int CSinIncCntr::read(){
     return m__actPos;
