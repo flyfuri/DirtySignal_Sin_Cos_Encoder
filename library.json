@@ -25,7 +25,7 @@
     [
       {
           "name": "TimerAndFilters",
-          "version": "https://github.com/flyfuri/TimerAndFilter.git"
+          "version": "https://github.com/flyfuri/TimerAndFilter.git#main"
       }
     ]
   }
