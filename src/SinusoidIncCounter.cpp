@@ -197,38 +197,3 @@ int CSinIncCntr::read(){
 int CSinIncCntr::setTo(int value){
     return m__offset = value - (m__actPos - m__offset);
 } 
-
-void CSinIncCntr::debug(HardwareSerial* PtrToSerial){
-    if (PtrToSerial){
-        PtrToSerial->print(m__actPos);     
-        PtrToSerial->print(";");
-        //PtrToSerial->print(m__intpolMin);      
-        //PtrToSerial->print(";");
-        //PtrToSerial->print(m__intpolMax);    
-        //PtrToSerial->print(";");
-        //PtrToSerial->print(toothedrack[m__actIndexTeethrack].halftMax_index);      
-        //PtrToSerial->print(";");
-        //PtrToSerial->print(toothedrack[m__actIndexTeethrack].halftMin_index);      
-        //PtrToSerial->print(";");
-        PtrToSerial->print(m__actHalfTooth);      
-        PtrToSerial->print(";");
-        PtrToSerial->print(m__offset);     
-        PtrToSerial->print(";");
-    //   PtrToSerial->print(m__sumAtPowerON);     
-    //   PtrToSerial->print(";");
-        PtrToSerial->print(m_Ch1_scaled);     
-        PtrToSerial->print(";");
-        PtrToSerial->print(m_Ch2_scaled);    
-        PtrToSerial->print(";");
-        PtrToSerial->print(m__sum);
-        PtrToSerial->print(";");
-        PtrToSerial->print(m__sub);
-        PtrToSerial->print(";");
-        PtrToSerial->print(m__sumMidLine);
-        PtrToSerial->print(";");
-    /*   PtrToSerial->print(m__sumOnLastCrossing);
-        PtrToSerial->print(";");
-        PtrToSerial->print(m__actIndexTeethrack);
-        PtrToSerial->print(";");*/
-    }
-}

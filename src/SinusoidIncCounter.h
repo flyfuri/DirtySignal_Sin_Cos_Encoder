@@ -52,5 +52,4 @@ class CSinIncCntr{
         int calc(int actCh1, int actCh2);
         int read();
         int setTo(int value);
-        void debug(HardwareSerial* PtrToSerial);
 };
