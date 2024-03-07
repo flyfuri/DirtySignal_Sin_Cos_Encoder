@@ -89,15 +89,7 @@ template <typename T> void CAutoScalePair<T>::setScalingFactors(T Ch1_fact, T Ch
     m__chB.minLevelOffs = Ch2_minLevOffs;
 }
 
-template <typename T> bool CAutoScalePair<T>::debugCh(bool ChB, float *result_arr, int size_arr){
-    Ch *ChToDbg;
-    if (ChB){
-        ChToDbg = &m__chB;
-    }
-    else {
-        ChToDbg = &m__chA;
-    }
-
+template <typename T> bool CAutoScalePair<T>::debugChX(Ch *ChToDbg, float *result_arr, int size_arr){
     if (size_arr >= 12){
         *result_arr = ChToDbg->tempMin;
         *(result_arr + 1) = ChToDbg->tempMax;
@@ -114,6 +106,14 @@ template <typename T> bool CAutoScalePair<T>::debugCh(bool ChB, float *result_ar
         return true;
     }
     return false;
+}
+
+template <typename T> bool CAutoScalePair<T>::debugChA(float *result_arr, int size_arr12){
+    return debugChX(&m__chA, result_arr, size_arr12);
+}
+
+template <typename T> bool CAutoScalePair<T>::debugChB(float *result_arr, int size_arr12){
+    return debugChX(&m__chB, result_arr, size_arr12);
 }
 
 template class CAutoScalePair<int>;

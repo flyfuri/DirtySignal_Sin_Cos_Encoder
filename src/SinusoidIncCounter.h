@@ -5,8 +5,8 @@
 
 
 #define INTPOLRES 100 //resulution of interpolation between halfteeth
-#define INIT_MIN_DIST_SUM_MINMAX 80 //initial minimal dist
-#define SUM_MIDLINE_ABOVE_MIN 23 //initial minimal dist
+#define INIT_MIN_DIST_SUM_MINMAX 70 //initial minimal dist
+#define SUM_MIDLINE_ABOVE_MIN 25 //initial minimal dist
 
 
 class CSinIncCntr{
@@ -18,8 +18,8 @@ class CSinIncCntr{
         int m__sumLowestMax;  //defines middle line of summary 
         int m__sumHighestMin; //defines middle line of summary 
         int m__sumMidLine = 0; //approx middle line of summary
-        short m__actStatusSUB = 0;  //wich half of the difference curve we're now (-1=negative, 0 undefined(at beginning), 1=positive)
         short m__actStatusSUM = 0;  //wich half of the summary curve we're now (-1=MIN, 0 undefined(at beginning), 1=MAX)
+        short m__actStatusSUB = 0;  //wich half of the difference curve we're now (-1=negative, 0 undefined(at beginning), 1=positive)
         int m__sumAtPowerON = -9999; //take 
         int m__offset = -9999; //offset calculated after very first travel beetween to opposite crossings of the channel curve
         
@@ -35,13 +35,9 @@ class CSinIncCntr{
         int m__intpolMax;  //actual Max used for interpolation
         int m__intpolMin;    //actual Min used for interpolation
 
-
-        double m_Ch1_scaled, m_Ch2_scaled; //scaled channels
-
         int m__actHalfTooth;  
         int m__actPos; //endresult
 
-        
         //int m__addCalcMinAv(int halftooth, int valueToAdd); //add and calc average Min for given half-tooth
         //int m__addCalcMaxAv(int halftooth, int valueToAdd); //add and calc average Min for given half-tooth  
         int m__calcSumMid(); //add actual m_sum and calculate initial mid between min and max (if they differ a minimum amount and if min 10 measures were taken)
@@ -52,4 +48,5 @@ class CSinIncCntr{
         int calc(int actCh1, int actCh2);
         int read();
         int setTo(int value);
+        bool debug(float *result_arr, int size_arr15);
 };

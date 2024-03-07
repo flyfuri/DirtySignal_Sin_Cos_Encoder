@@ -197,3 +197,25 @@ int CSinIncCntr::read(){
 int CSinIncCntr::setTo(int value){
     return m__offset = value - (m__actPos - m__offset);
 } 
+
+bool CSinIncCntr::debug(float *result_arr, int size_arr15){
+    if (size_arr15 >= 15){
+        *result_arr = m__sum;
+        *(result_arr + 1) = m__sub;
+        *(result_arr + 2) = m__sumOnLastCrossing;
+        *(result_arr + 3) = m__sumLowestMax;
+        *(result_arr + 4) = m__sumHighestMin;
+        *(result_arr + 5) = m__actStatusSUM;
+        *(result_arr + 6) = m__actStatusSUB;
+        *(result_arr + 7) = m__sumAtPowerON;
+        *(result_arr + 8) = m__offset;
+        *(result_arr + 9) = m__actIndexTeethrack;
+        *(result_arr + 10) = m__actIndexTeethrack;
+        *(result_arr + 11) = m__intpolMax;
+        *(result_arr + 12) = m__intpolMin;
+        *(result_arr + 13) = m__actHalfTooth;
+        *(result_arr + 14) = m__actPos;
+        return true;
+    }
+    return false;
+}
