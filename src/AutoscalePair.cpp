@@ -53,14 +53,15 @@ template <typename T> void CAutoScalePair<T>::searchMinMax(Ch *ChToChk){
 }
 
 template <typename T> void CAutoScalePair<T>::updateMinMaxAverage(Ch *ChToChk, Ch *ChRef){
-   if (ChRef->SumAbsValChangeLastX > 10 && ChRef->SumAbsValChangeLastX < 25 && (ChRef->risingIndex > 6 || ChRef->risingIndex < -6)){
-        if (ChToChk->risingIndex == 3 ){
+   if (ChRef->SumAbsValChangeLastX > ChToChk->lowerTresChangeRateLastXRef && ChRef->SumAbsValChangeLastX < ChToChk->upperTreshChangRateLastXRef 
+       && (ChRef->risingIndex > ChToChk->treshRisIndxRef || ChRef->risingIndex <  ChToChk->treshRisIndxRef * (-1))){
+        if (ChToChk->risingIndex == ChToChk->treshRisIndx ){
             ChToChk->risingIndex++; //avoid taking same valley twice
             ChToChk->avMin = ChToChk->FiltAverMin.measurement(ChToChk->tempMin);
             ChToChk->tempMin = DEFAULT_MIN;
             ChToChk->tempMax = DEFAULT_MAX;
         }
-        if (ChToChk->risingIndex == -3){
+        if (ChToChk->risingIndex == ChToChk->treshRisIndx * (-1)){
             ChToChk->avMax = ChToChk->FiltAverMax.measurement(ChToChk->tempMax);
             ChToChk->risingIndex--; //avoid taking same peak twice
             ChToChk->tempMin = DEFAULT_MIN;
@@ -82,6 +83,8 @@ template <typename T> void CAutoScalePair<T>::scaleCH(Ch *ChToScale, T *ChOut){
     *ChOut = (ChToScale->actVal - ChToScale->avMin) * ChToScale->factor + ChToScale->avMin + ChToScale->minLevelOffs;
 } 
 
+
+
 template <typename T> void CAutoScalePair<T>::setScalingFactors(T Ch1_fact, T Ch2_fact, T Ch1_minLevOffs, T Ch2_minLevOffs){
     m__chA.factor = (float)Ch1_fact;
     m__chB.factor = (float)Ch2_fact;
@@ -89,8 +92,23 @@ template <typename T> void CAutoScalePair<T>::setScalingFactors(T Ch1_fact, T Ch
     m__chB.minLevelOffs = Ch2_minLevOffs;
 }
 
+template <typename T> void CAutoScalePair<T>::setPeekDetectThresholdsChX(Ch *ChToSet,int treshRisIndx, int treshRisIndxRef, int lowerTresChangeRateLastXRef, int upperTreshChangRateLastXRef){
+    if(treshRisIndx >= 0){ChToSet->treshRisIndx = treshRisIndx;}
+    if(treshRisIndxRef >= 0){ChToSet->treshRisIndxRef = treshRisIndxRef;}
+    if(lowerTresChangeRateLastXRef >= 0){ChToSet->lowerTresChangeRateLastXRef = lowerTresChangeRateLastXRef;}
+    if(upperTreshChangRateLastXRef >=0){ChToSet->upperTreshChangRateLastXRef = upperTreshChangRateLastXRef;}
+}
+
+template <typename T> void CAutoScalePair<T>::setPeekDetectThresholdsChA(int treshRisIndx, int treshRisIndxRef, int lowerTresChangeRateLastXRef, int upperTreshChangRateLastXRef){
+    setPeekDetectThresholdsChX(&m__chA, treshRisIndx, treshRisIndxRef, lowerTresChangeRateLastXRef, upperTreshChangRateLastXRef);
+}
+
+template <typename T> void CAutoScalePair<T>::setPeekDetectThresholdsChB(int treshRisIndx, int treshRisIndxRef, int lowerTresChangeRateLastXRef, int upperTreshChangRateLastXRef){
+    setPeekDetectThresholdsChX(&m__chB, treshRisIndx, treshRisIndxRef, lowerTresChangeRateLastXRef, upperTreshChangRateLastXRef);
+}
+
 template <typename T> bool CAutoScalePair<T>::debugChX(Ch *ChToDbg, float *result_arr, int size_arr){
-    if (size_arr >= 12){
+    if (size_arr >= 16){
         *result_arr = ChToDbg->tempMin;
         *(result_arr + 1) = ChToDbg->tempMax;
         *(result_arr + 2) = ChToDbg->actVal;
@@ -103,17 +121,21 @@ template <typename T> bool CAutoScalePair<T>::debugChX(Ch *ChToDbg, float *resul
         *(result_arr + 9) = ChToDbg->risingIndex;
         *(result_arr + 10) = ChToDbg->SumAbsValChangeLastX;
         *(result_arr + 11) = ChToDbg->SumValChangeLastX;
+        *(result_arr + 12) = ChToDbg->treshRisIndx;
+        *(result_arr + 13) = ChToDbg->treshRisIndxRef;
+        *(result_arr + 14) = ChToDbg->lowerTresChangeRateLastXRef;
+        *(result_arr + 15) = ChToDbg->upperTreshChangRateLastXRef;
         return true;
     }
     return false;
 }
 
-template <typename T> bool CAutoScalePair<T>::debugChA(float *result_arr, int size_arr12){
-    return debugChX(&m__chA, result_arr, size_arr12);
+template <typename T> bool CAutoScalePair<T>::debugChA(float *result_arr, int size_arr16){
+    return debugChX(&m__chA, result_arr, size_arr16);
 }
 
-template <typename T> bool CAutoScalePair<T>::debugChB(float *result_arr, int size_arr12){
-    return debugChX(&m__chB, result_arr, size_arr12);
+template <typename T> bool CAutoScalePair<T>::debugChB(float *result_arr, int size_arr16){
+    return debugChX(&m__chB, result_arr, size_arr16);
 }
 
 template class CAutoScalePair<int>;
