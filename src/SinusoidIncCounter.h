@@ -24,12 +24,12 @@ class CSinIncCntr{
         int m__offset = -9999; //offset calculated after very first travel beetween to opposite crossings of the channel curve
         
         // used to find the approx. middle line of summary curve
-        //ANFLTR::CFilterAnalogOverMeasures SumCurveLastMaxs{10,10};
-        //ANFLTR::CFilterAnalogOverMeasures SumCurveLastMins{10,10};
+        ANFLTR::CFilterAnalogOverMeasures<int> SumCurveLastMaxs{10,10};
+        ANFLTR::CFilterAnalogOverMeasures<int> SumCurveLastMins{10,10};
         //bool m__initialSumMidFound; //initial sum middle line has been found
 
         //used for interpolation beetween flank counts to increse resolution 
-        CTeethMemory<int> TeethMem_Sum;   
+        //CTeethMemory<int> TeethMem_Sum;   
 
         int m__actIndexTeethrack; 
         int m__intpolMax;  //actual Max used for interpolation
@@ -38,9 +38,7 @@ class CSinIncCntr{
         int m__actHalfTooth;  
         int m__actPos; //endresult
 
-        //int m__addCalcMinAv(int halftooth, int valueToAdd); //add and calc average Min for given half-tooth
-        //int m__addCalcMaxAv(int halftooth, int valueToAdd); //add and calc average Min for given half-tooth  
-        int m__calcSumMid(); //add actual m_sum and calculate initial mid between min and max (if they differ a minimum amount and if min 10 measures were taken)
+       int m__calcSumMid(); //add actual m_sum and calculate initial mid between min and max (if they differ a minimum amount and if min 10 measures were taken)
         int m__SinInterpolMinMax(int min, int max, int actval, int resolution);
         
     public:
