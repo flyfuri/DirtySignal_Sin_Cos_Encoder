@@ -17,58 +17,11 @@ CSinIncCntr::CSinIncCntr(){
     m__sumMidLine = 0;
     m__actStatusSUB = 0;  
     m__actStatusSUM = 0; 
-    m__sumAtPowerON = -9999; 
-    m__offset = -9999;
+    m__offset = 0;
 }
 
-
-int CSinIncCntr::m__calcSumMid(){
-    
-    int tempCrsDiff = m__sum - m__sumOnLastCrossing;
-    if(m__sumOnLastCrossing == -9999){  //only the case at very first crossing measured
-        m__sumOnLastCrossing = m__sum;
-    }
-    else if (tempCrsDiff <= INIT_MIN_DIST_SUM_MINMAX * -1){ //act sum (this crossing) is MIN of curve
-       if(m__sumMidLine == 0){ //initial search for middle line of summary curve
-            m__offset = 0;//m__offset= (-2 * INTPOLRES) + m__SinInterpolMinMax(m__sum, m__sumOnLastCrossing, m__sumAtPowerON, INTPOLRES);//TODO not working correctly yet
-            m__sumHighestMin = m__sum;
-            m__sumLowestMax = m__sumOnLastCrossing;  
-        }  
-        if(m__sum > m__sumHighestMin)
-            {m__sumHighestMin = m__sum;}
-        if(m__sumOnLastCrossing > m__sumLowestMax)
-            {m__sumLowestMax = m__sumOnLastCrossing;}  
-        
-        //return line which decides whether sum curve is MIN or MAX
-        m__sumMidLine = (m__sumHighestMin + m__sumLowestMax) / 2;  
-    }
-    else if (tempCrsDiff >= INIT_MIN_DIST_SUM_MINMAX){ //act sum (this crossing) is MAX of curve
-       if(m__sumMidLine == 0){ //initial search for middle line of summary curve
-             m__offset = 0;//m__offset = (m__SinInterpolMinMax(m__sumOnLastCrossing, m__sum, m__sumAtPowerON, INTPOLRES) * -1) - INTPOLRES; //TODO not working correctly yet
-            m__sumHighestMin = m__sumOnLastCrossing;
-            m__sumLowestMax = m__sum;
-        }  
-        
-        if(m__sumOnLastCrossing > m__sumHighestMin)
-            {m__sumHighestMin = m__sumOnLastCrossing;}
-        if(m__sum < m__sumLowestMax)
-            {m__sumLowestMax = m__sum;}
-
-        //return line which decides whether sum curve is MIN or MAX
-        m__sumMidLine = (m__sumHighestMin + m__sumLowestMax) / 2; 
-    }
-    if(m__sumMidLine > 0){
-        if (m__sum >= m__sumMidLine){
-            m__actStatusSUM = 1; 
-        }
-        else{
-            m__actStatusSUM = -1;
-        }
-        return m__sumMidLine;
-        }
-    else{
-        return 0;
-    }
+int CSinIncCntr::setSumMidLine(int midl){
+    return m__sumMidLine = midl;
 }
 
 int CSinIncCntr::m__SinInterpolMinMax(int min, int max, int actval, int resolution){
@@ -111,11 +64,10 @@ int CSinIncCntr::calc(int actCh1, int actCh2){
         else{
             m__actStatusSUB = -1;
         } 
-        m__sumAtPowerON = m__sum;  //memorize actual sum to do interpolation of very first position later
     }
 
     if(m__actStatusSUB > 0 && m__sub < 0){ //CROSSING: when difference is crossing Null-line from positive to negative
-        if (m__calcSumMid() != 0){
+        if (m__sumMidLine != 0){
             if(m__sum >= m__sumMidLine) //sub FALLING sum at MAX  (channel lines are crossing: sub-curve crossing nullpoint FALLING with summary at MAX)
             {   
                 m__intpolMax = SumCurveLastMaxs.measurement(m__sum);
@@ -131,7 +83,7 @@ int CSinIncCntr::calc(int actCh1, int actCh2){
         m__actStatusSUB = -1;  //always to do when sub crossing zero line!
     }  
     else if(m__actStatusSUB < 0 && m__sub >= 0){////CROSSING: when difference is crossing Null-line from negative to positive
-        if (m__calcSumMid() != 0){
+        if (m__sumMidLine != 0){
             if(m__sum >= m__sumMidLine)//sub RISING sum at MAX  (channel lines are crossing: sub-curve crossing nullpoint RISING with summary at MAX)
             {   
                 m__intpolMax = SumCurveLastMaxs.measurement(m__sum);

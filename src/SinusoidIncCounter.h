@@ -37,8 +37,6 @@ class CSinIncCntr{
 
         int m__actHalfTooth;  
         int m__actPos; //endresult
-
-       int m__calcSumMid(); //add actual m_sum and calculate initial mid between min and max (if they differ a minimum amount and if min 10 measures were taken)
         int m__SinInterpolMinMax(int min, int max, int actval, int resolution);
         
     public:
@@ -46,5 +44,6 @@ class CSinIncCntr{
         int calc(int actCh1, int actCh2);
         int read();
         int setTo(int value);
+        int setSumMidLine(int midl); //set line to be used with m__sum
         bool debug(float *result_arr, int size_arr15);
 };
