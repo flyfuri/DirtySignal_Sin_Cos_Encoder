@@ -118,22 +118,12 @@ int CSinIncCntr::calc(int actCh1, int actCh2){
         if (m__calcSumMid() != 0){
             if(m__sum >= m__sumMidLine) //sub FALLING sum at MAX  (channel lines are crossing: sub-curve crossing nullpoint FALLING with summary at MAX)
             {   
-                if(m__sum > m__sumMidLine){    
-                     m__intpolMax = SumCurveLastMaxs.measurement(m__sum);
-                }
-                else{
-                    m__intpolMin = SumCurveLastMins.measurement(m__sum);
-                }
+                m__intpolMax = SumCurveLastMaxs.measurement(m__sum);
                 m__actHalfTooth--;
             }
             else //sub FALLING sum at MIN (channel lines are crossing: sub-curve crossing nullpoint FALLING with summary at MIN)
             {
-                if(m__sum > m__sumMidLine){    
-                     m__intpolMax = SumCurveLastMaxs.measurement(m__sum);
-                }
-                else{
-                    m__intpolMin = SumCurveLastMins.measurement(m__sum);
-                }
+                m__intpolMin = SumCurveLastMins.measurement(m__sum);
                 m__actHalfTooth++;
             } 
         }
@@ -144,22 +134,12 @@ int CSinIncCntr::calc(int actCh1, int actCh2){
         if (m__calcSumMid() != 0){
             if(m__sum >= m__sumMidLine)//sub RISING sum at MAX  (channel lines are crossing: sub-curve crossing nullpoint RISING with summary at MAX)
             {   
-                if(m__sum > m__sumMidLine){    
-                     m__intpolMax = SumCurveLastMaxs.measurement(m__sum);
-                }
-                else{
-                    m__intpolMin = SumCurveLastMins.measurement(m__sum);
-                }
+                m__intpolMax = SumCurveLastMaxs.measurement(m__sum);
                 m__actHalfTooth++;
             }
             else //sub RISING sum at MIN  (channel lines are crossing: sub-curve crossing nullpoint RISING with summary at MIN)
             {
-                if(m__sum > m__sumMidLine){    
-                     m__intpolMax = SumCurveLastMaxs.measurement(m__sum);
-                }
-                else{
-                    m__intpolMin = SumCurveLastMins.measurement(m__sum);
-                }
+                m__intpolMin = SumCurveLastMins.measurement(m__sum);
                 m__actHalfTooth--;
             }
         }
