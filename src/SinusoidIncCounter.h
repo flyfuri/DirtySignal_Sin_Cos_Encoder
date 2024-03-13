@@ -5,6 +5,8 @@
 
 
 #define INTPOLRES 100 //resulution of interpolation between halfteeth
+#define DEFAULT_MAX -9999
+#define DEFAULT_MIN 9999
 
 class CSinIncCntr{
     private: 
@@ -18,8 +20,15 @@ class CSinIncCntr{
         int m__offset = 0; //offset for end result
         
         // used to find the average peek and valley to be used for interplation
-        ANFLTR::CFilterAnalogOverMeasures<int> SumCurveLastMaxs{10,10};
-        ANFLTR::CFilterAnalogOverMeasures<int> SumCurveLastMins{10,10};  
+        ANFLTR::CFilterAnalogOverMeasures<int> m__SumCurveLastMaxs{10,10};
+        ANFLTR::CFilterAnalogOverMeasures<int> m__SumCurveLastMins{10,10}; 
+
+        //individual peeks to to be used for interplation
+        int m__tempMax = DEFAULT_MAX; //max on actual curve section 
+        int m__tempMin = DEFAULT_MIN; //min on actual curve section
+        int m__directionIndex = 0; //shows the actual direction of counting and how many counts since direction change
+        CTeethMemory<int> m__IndividualMaxs{-10,10};
+        CTeethMemory<int> m__IndividualMins{-10,10};
 
         int m__intpolMax;  //actual Max used for interpolation
         int m__intpolMin;    //actual Min used for interpolation
@@ -34,5 +43,5 @@ class CSinIncCntr{
         int read();
         int setTo(int value);
         int setSumMidLine(int midl); //set line to be used with m__sum
-        bool debug(float *result_arr, int size_arr15);
+        bool debug(float *result_arr, int size_arr11);
 };

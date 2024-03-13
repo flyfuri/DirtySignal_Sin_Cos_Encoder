@@ -14,123 +14,119 @@
        **+0      **+1     **+2          index in memory array, ** = NBR_TEETH_ON_RACK (array is double the size)
 */
 
-#include <TeethMemory.h>
+#include "TeethMemory.h"
+#include <analog_filter.h>
+#include <math.h>
 
-template <typename T> CTeethMemory<T>::CTeethMemory(){
-    for(int i = 0; i < NBR_TEETH_ON_RACK  * 2; i++){
-        for(int ii = 0; ii < NBR_TO_AVR_IND_TOOTH; ii++){
-            toothedrack[i].halft_MinMax[ii]=0;
-        }
-        toothedrack[i].MinMaxAv=0;
-        toothedrack[i].halftMinMax_subindex=0;
-    }
+template <typename T> CTeethMemory<T>::CTeethMemory(){ //Constructor
+    m_init(-10,10);
 }
 
-template <typename T> bool CTeethMemory<T>::calcMemIndexForMin(int halftooth, int &calculatedIndex){
-    int tempTeethindex = (NBR_TEETH_ON_RACK + halftooth);
-    tempTeethindex = (halftooth % 2 == 0) ? tempTeethindex : tempTeethindex + 1; 
-    if(tempTeethindex < 0){
-        calculatedIndex = 0;
-        return false;
-    } 
-    else if (tempTeethindex >= NBR_TEETH_ON_RACK * 2){
-        calculatedIndex = (NBR_TEETH_ON_RACK * 2) -1;
-        return false;
+template <typename T> CTeethMemory<T>::CTeethMemory(int indNeg, int indPos){ //Constructor
+    m_init(indNeg, indPos);
+}
+
+template <typename T> CTeethMemory<T>::~CTeethMemory(){
+    for (int i = 0; i < m__indNeg; i++){
+        delete m__ValuesIndNeg[i];
+    }
+    for (int i = 0; i < m__ind0Pos; i++){
+        delete m__ValuesInd0Pos[i];
+    }
+    delete [] m__ValuesInd0Pos;
+    delete [] m__ValuesIndNeg;
+}
+
+template <typename T> void CTeethMemory<T>::m_init(int indNeg, int indPos){ //Constructor
+  if (indNeg > -2)
+    indNeg = 2;
+  else if (indNeg < -10000)
+    indNeg = 10000;
+  else
+    m__indNeg = abs(indNeg);
+
+  m__ValuesIndNeg = new ANFLTR::CFilterAnalogOverMeasures<T>*[m__indNeg];
+  for (int i = 0; i < m__indNeg; i++){
+    m__ValuesIndNeg[i] = new ANFLTR::CFilterAnalogOverMeasures<T>(3,3);
+    m__ValuesIndNeg[i]->setErrDefault(-99999);
+  }
+
+  if (indPos < 2)
+    indPos = 2;
+  else if (indNeg > 10000)
+    indPos = 10000;
+  else
+    m__ind0Pos = indPos;
+
+  m__ValuesInd0Pos = new ANFLTR::CFilterAnalogOverMeasures<T>*[m__ind0Pos];
+  for (int i = 0; i < m__ind0Pos; i++){
+    m__ValuesInd0Pos[i] = new ANFLTR::CFilterAnalogOverMeasures<T>(3,3);  
+    m__ValuesInd0Pos[i]->setErrDefault(-99999);
+  }
+}
+
+template <typename T> int CTeethMemory<T>::addValueByIndex(T value, int index){
+    T tmpvalue = value;
+    if (index >= 0 && index < m__ind0Pos || index < 0 && index < m__indNeg){
+        if(index >= 0){
+            m__actPtrValues = m__ValuesInd0Pos[index];
+        }
+        else{
+            m__actPtrValues = m__ValuesIndNeg[abs(index)];
+        }
+        m__actPtrValues->measurement(tmpvalue);
+        return m__actPtrValues->getNbrMeas();
     }
     else{
-        calculatedIndex = tempTeethindex;
-        return true;
+        return 0;
     }
 }
 
-template <typename T> bool CTeethMemory<T>::calcMemIndexForMax(int halftooth, int &calculatedIndex){
-    int tempTeethindex = (NBR_TEETH_ON_RACK + halftooth);
-    tempTeethindex = (halftooth % 2 == 0) ? tempTeethindex + 1 : tempTeethindex; 
-    if(tempTeethindex < 0){
-        calculatedIndex = 0;
-        return false;
-    } 
-    else if (tempTeethindex >= NBR_TEETH_ON_RACK * 2){
-        calculatedIndex = (NBR_TEETH_ON_RACK * 2) -1;
-        return false;
+template <typename T> T CTeethMemory<T>::getAvByIndex(int index){
+    if (index >= 0 && index < m__ind0Pos || index < 0 && index < m__indNeg){
+        if(index >= 0){
+            m__actPtrValues = m__ValuesInd0Pos[index];
+        }
+        else{
+            m__actPtrValues = m__ValuesIndNeg[abs(index)];
+        }
+        return m__actPtrValues->getAverage();
     }
     else{
-        calculatedIndex = tempTeethindex;
-        return true;
+        return -999999;
     }
 }
 
-template <typename T> T CTeethMemory<T>::getMinMaxAv_withArrIndex(int arrIndex){
-    return toothedrack[arrIndex].MinMaxAv;
-}
-
-template <typename T> T CTeethMemory<T>::getMinAv(int halftooth){
-    int tempToothIndex;
-    if(calcMemIndexForMin(halftooth, tempToothIndex)){ 
-        return getMinMaxAv_withArrIndex(tempToothIndex);
-    }
-    return 0; //TODO
-}
-
-template <typename T> T CTeethMemory<T>::getMaxAv(int halftooth){
-    int tempToothIndex;
-    if(calcMemIndexForMax(halftooth, tempToothIndex)){ 
-        return getMinMaxAv_withArrIndex(tempToothIndex);
-    }
-    return 0; //TODO
-}
-
-template <typename T> T CTeethMemory<T>::addCalcMinAv(int halftooth, T valueToAdd){ //add and calc average Min for given half-tooth
-    int tempToothIndex;
-    if(calcMemIndexForMin(halftooth, tempToothIndex)){ 
-        toothedrack[tempToothIndex].halft_MinMax[toothedrack[tempToothIndex].halftMinMax_subindex] = valueToAdd;
-        if (++(toothedrack[tempToothIndex].halftMinMax_subindex) >= NBR_TO_AVR_IND_TOOTH ) //move index for next measure to replace
-            toothedrack[tempToothIndex].halftMinMax_subindex = 0;
-    }
-    
-    T temptotal = 0;
-    int tempNbrsToAv = NBR_TO_AVR_IND_TOOTH;
-    for(int i = 0; i < NBR_TO_AVR_IND_TOOTH; i++){  //calc average
-        if(toothedrack[tempToothIndex].halft_MinMax[i] > 0){
-            temptotal += toothedrack[tempToothIndex].halft_MinMax[i];
+template <typename T> double CTeethMemory<T>::getAvByIndexDbl(int index){
+    if (index >= 0 && index < m__ind0Pos || index < 0 && index < m__indNeg){
+        if(index >= 0){
+            m__actPtrValues = m__ValuesInd0Pos[index];
         }
-        else if (tempNbrsToAv > 1){ //don't go lower than 1 to avoid later DIV0
-            tempNbrsToAv--;
+        else{
+            m__actPtrValues = m__ValuesIndNeg[abs(index)];
         }
-    }
-    if (temptotal > 0){
-        return toothedrack[tempToothIndex].MinMaxAv = temptotal / tempNbrsToAv;
+        return m__actPtrValues->getAverageDbl();
     }
     else{
-        return toothedrack[tempToothIndex].MinMaxAv;
+        return -999999;
     }
 }
 
-template <typename T> T CTeethMemory<T>::addCalcMaxAv(int halftooth, T valueToAdd){ //add and calc average Max for given half-tooth 
-    int tempToothIndex;
-     if(calcMemIndexForMax(halftooth, tempToothIndex)){ 
-        toothedrack[tempToothIndex].halft_MinMax[toothedrack[tempToothIndex].halftMinMax_subindex] = valueToAdd;
-        if (++(toothedrack[tempToothIndex].halftMinMax_subindex) >= NBR_TO_AVR_IND_TOOTH ) //move index for next measure to replace
-            toothedrack[tempToothIndex].halftMinMax_subindex = 0;
-    }
-    
-    T temptotal = 0;
-    int tempNbrsToAv = NBR_TO_AVR_IND_TOOTH;
-    for(int i = 0; i < NBR_TO_AVR_IND_TOOTH; i++){  //calc average
-        if(toothedrack[tempToothIndex].halft_MinMax[i] > 0){
-            temptotal += toothedrack[tempToothIndex].halft_MinMax[i];
+template <typename T> int CTeethMemory<T>::getNbrMeasByIndex(int index){
+    if (index >= 0 && index < m__ind0Pos || index < 0 && index < m__indNeg){
+        if(index >= 0){
+            m__actPtrValues = m__ValuesInd0Pos[index];
         }
-        else if (tempNbrsToAv > 1){ //don't go lower than 1 to avoid later DIV0
-            tempNbrsToAv--;
+        else{
+            m__actPtrValues = m__ValuesIndNeg[abs(index)];
         }
-    }
-    if (temptotal > 0){
-        return toothedrack[tempToothIndex].MinMaxAv = temptotal / tempNbrsToAv;
+        return m__actPtrValues->getNbrMeas();
     }
     else{
-        return toothedrack[tempToothIndex].MinMaxAv;
+        return 0;
     }
 }
+
 
 template class CTeethMemory<int>;
 template class CTeethMemory<float>;
