@@ -11,11 +11,13 @@ The basic principle is already working, but I am still trying new approaches to 
 An encoder works roughly like this:
 #### AutoscalerPair:
 - The 2 signals first gets processed by the AutoScalerPair class which automatically scales the amplitudes of both signals to a common size and puts them on the same level. 
+![Alt Text](/docs/pics/scaler.jpg?raw=true "scaling")
 
 #### SinusoidIncCounter:
 - from channel A and B a "summary-" and a "difference-channel" is calculated.
 - tooth counting: each time the "difference-channel" crosses 0, the two signals A and B are crossing. That's where the teeth were counted (actually each halfteeth). 
 - to get a higher resolution, interpolation is done between the half teeth using the "summary-channel".
+![Alt Text](/docs/pics/interpolation.jpg?raw=true "interpolation")
 
 ### Example: 
 [CondorRudderPedal_ESP8622](https://github.com/flyfuri/CondorRudderPedal_ESP8622)
