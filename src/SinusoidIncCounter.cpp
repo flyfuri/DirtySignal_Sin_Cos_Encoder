@@ -79,7 +79,7 @@ int CSinIncCntr::calc(int actCh1, int actCh2){
                 m__intpolMin = round(tmpMin);
             }
             else{
-                m__intpolMin = m__SumCurveLastMaxs.getAverage();
+                m__intpolMin = m__SumCurveLastMins.getAverage();
             }
         }
         else //sub FALLING sum at MIN (channel lines are crossing: sub-curve crossing nullpoint FALLING with summary at MIN)
@@ -121,7 +121,7 @@ int CSinIncCntr::calc(int actCh1, int actCh2){
                 m__intpolMin = round(tmpMin);
             }
             else{
-                m__intpolMin = m__SumCurveLastMaxs.getAverage();
+                m__intpolMin = m__SumCurveLastMins.getAverage();
             }
         }
         else //sub RISING sum at MIN  (channel lines are crossing: sub-curve crossing nullpoint RISING with summary at MIN)
